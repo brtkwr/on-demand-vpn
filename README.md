@@ -43,7 +43,7 @@ gcloud iam roles create vpnSwitch "${G[@]}" \
 gcloud compute instances add-iam-policy-binding "$VM" "${G[@]}" --zone "$ZONE" \
   --member "serviceAccount:vpn-switch@$GCP_PROJECT.iam.gserviceaccount.com" \
   --role "projects/$GCP_PROJECT/roles/vpnSwitch"
-for r in roles/cloudbuild.builds.builder roles/logging.logWriter roles/artifactregistry.writer; do
+for r in roles/cloudbuild.builds.builder roles/logging.logWriter; do
   gcloud projects add-iam-policy-binding "$GCP_PROJECT" --condition=None \
     --member "serviceAccount:vpn-switch-build@$GCP_PROJECT.iam.gserviceaccount.com" --role "$r"
 done

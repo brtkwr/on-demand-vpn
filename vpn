@@ -9,11 +9,13 @@ set -euo pipefail
 call() {
   local token
   token=$(gcloud secrets versions access latest --secret vpn-switch-token "${GCLOUD[@]}")
-  curl -sf --max-time 150 -H "Authorization: Bearer $token" "$FUNCTION_URL?action=$1"
+  # header on stdin keeps the token out of ps; --fail-with-body shows the reply on 4xx/5xx
+  curl -sS --fail-with-body --max-time 150 -H @- "$FUNCTION_URL?action=$1" <<<"Authorization: Bearer $token"
 }
 
 case "${1:-}" in
 up)
+  sudo wg-quick down "$WG_CONF" 2>/dev/null || true # recover from a tunnel left up after preemption
   out=$(call start); echo "$out"
   IP=${out##* } # replies to start end with the VM's IP
   sudo wg-quick up "$WG_CONF"

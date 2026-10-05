@@ -2,7 +2,7 @@
 # Run as root on a fresh Debian VM: installs WireGuard, creates the server key and wg0 with NAT
 # and an MSS clamp, and enables it. Leaves an existing key and config alone. Add clients with add-peer.sh.
 set -euo pipefail
-apt-get install -y wireguard iptables qrencode
+apt-get update && apt-get install -y wireguard iptables qrencode
 cd /etc/wireguard && umask 077
 [ -f server.key ] || { wg genkey > server.key; wg pubkey < server.key > server.pub; }
 NIC=$(ip route show default | awk '{print $5}')
