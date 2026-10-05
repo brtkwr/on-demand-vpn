@@ -13,6 +13,7 @@ This repo is public. Every value that identifies the live deployment lives in `.
 - `start` on a stopped VM costs money while it runs; stop it again when testing (`./vpn down` or `?action=stop`).
 - Secrets are in Secret Manager (`vpn-switch-token`, `vpn-switch-cf-token`). Read them into variables or pipes, never print them.
 - Run `shellcheck -S warning vpn deploy.sh add-peer.sh env.sh server/setup.sh` after editing scripts.
+- After editing the function, run `uv run --with functions-framework --with google-auth --with requests python function/test_main.py`. It fakes the Compute API, so it costs nothing; `function/.gcloudignore` keeps it out of deploys.
 
 ## Gotchas
 
