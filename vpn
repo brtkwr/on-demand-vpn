@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Switch the VPN on and off from a laptop via the vpn-switch function.
 #   vpn up      start the VM and connect
-#   vpn down    disconnect (the VM stops itself after 15 idle minutes)
+#   vpn down    disconnect (the VM stops itself after 5 idle minutes)
 #   vpn stop    stop the VM now, even if other devices are connected
 #   vpn status  show the VM's state and IP
 set -euo pipefail

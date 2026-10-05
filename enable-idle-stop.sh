@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install the idle auto-stop on the VM (must be running): copies server/idle-stop.sh, gives
-# the VM the function URL and token (root-only), and runs it every 5 minutes.
+# the VM the function URL and token (root-only), and runs it every minute.
 set -euo pipefail
 . "$(dirname "$(readlink -f "$0")")/env.sh"
 gcloud compute scp "$ROOT/server/idle-stop.sh" "$VM":/tmp/idle-stop.sh --zone "$ZONE" "${GCLOUD[@]}"
@@ -20,8 +20,8 @@ ExecStart=/usr/local/sbin/idle-stop
 UNIT
 cat > /etc/systemd/system/idle-stop.timer <<UNIT
 [Timer]
-OnBootSec=5min
-OnUnitActiveSec=5min
+OnBootSec=1min
+OnUnitActiveSec=1min
 [Install]
 WantedBy=timers.target
 UNIT

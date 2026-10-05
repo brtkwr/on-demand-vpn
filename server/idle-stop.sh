@@ -3,7 +3,7 @@
 # parks DNS) once no client has handshaken for IDLE_MIN minutes. Connected clients handshake
 # at least every 2 minutes. DRY_RUN=1 prints the decision without stopping.
 set -euo pipefail
-IDLE_MIN=${IDLE_MIN:-15}
+IDLE_MIN=${IDLE_MIN:-5}
 limit=$((IDLE_MIN * 60)); now=$(date +%s)
 uptime=$(cut -d. -f1 /proc/uptime)
 last=$(wg show wg0 latest-handshakes | awk '{print $2}' | sort -n | tail -1)
