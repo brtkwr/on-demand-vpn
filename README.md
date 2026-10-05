@@ -23,13 +23,16 @@ set -a; . ./.env; set +a
 G=(--project "$GCP_PROJECT")
 
 # VM and firewall
-gcloud compute firewall-rules create allow-wireguard "${G[@]}" \
-  --network default --allow udp:51820 --source-ranges 0.0.0.0/0 --target-tags wireguard
+# Only WireGuard and SSH reach the VM, whatever other project-wide rules allow
+gcloud compute firewall-rules create wireguard-allow "${G[@]}" --network default --priority 900 \
+  --allow udp:51820,tcp:22 --source-ranges 0.0.0.0/0 --target-tags wireguard
+gcloud compute firewall-rules create wireguard-deny-rest "${G[@]}" --network default --priority 950 \
+  --action DENY --rules all --source-ranges 0.0.0.0/0 --target-tags wireguard
 gcloud compute instances create "$VM" "${G[@]}" --zone "$ZONE" \
   --machine-type f1-micro --provisioning-model SPOT --instance-termination-action STOP \
   --network-tier STANDARD --image-family debian-13 --image-project debian-cloud \
   --boot-disk-size 10GB --boot-disk-type pd-standard \
-  --tags wireguard --no-service-account --no-scopes
+  --tags wireguard --no-service-account --no-scopes --metadata block-project-ssh-keys=TRUE
 gcloud compute scp server/setup.sh "$VM":/tmp/ "${G[@]}" --zone "$ZONE"
 gcloud compute ssh "$VM" "${G[@]}" --zone "$ZONE" --command 'sudo bash /tmp/setup.sh'
 
