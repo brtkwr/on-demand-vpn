@@ -77,9 +77,7 @@ On macOS, `brew install wireguard-tools` provides `wg` and `wg-quick`. Symlink `
 
 ## iPhone
 
-A Shortcut with _Choose from Menu_ (start, stop), then _Get Contents of URL_ on `https://<region>-<project>.cloudfunctions.net/vpn-switch?action=<choice>` with a header `Authorization: Bearer <token>`, then _Show Result_. Switch the tunnel on in the WireGuard app once `start` returns.
-
-For the least friction, add a Shortcuts automation: **App → WireGuard → Is Opened → Run Immediately**, with _Get Contents of URL_ (`?action=start`, same header) and _Show Notification_ of the result. Opening WireGuard starts the VM; toggle the tunnel once the notification arrives. With `enable-idle-stop.sh` installed, toggling off is enough: the VM stops itself after 5 idle minutes.
+A Shortcuts automation: **App → WireGuard → Is Opened → Run Immediately**, running _Get Contents of URL_ on `https://<region>-<project>.cloudfunctions.net/vpn-switch?action=start` with a header `Authorization: Bearer <token>`, then _Show Notification_ with the result. Opening WireGuard starts the VM; toggle the tunnel once the notification arrives. With `enable-idle-stop.sh` installed, toggling off is enough: the VM stops itself after 5 idle minutes.
 
 ## Notes
 
