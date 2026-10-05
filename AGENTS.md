@@ -9,7 +9,7 @@ This repo is public. Every value that identifies the live deployment lives in `.
 ## Working on it
 
 - Scripts source `env.sh`, which loads `.env` and sets `GCLOUD` (project/account flags) and `FUNCTION_URL`.
-- Deploy the function with `./deploy.sh`; check it with `./vpn status`.
+- Merges to main that touch `function/`, `deploy.sh` or `env.sh` deploy the function automatically through a Cloud Build trigger configured outside this repo, so merging is deploying. Don't also run `./deploy.sh` by hand for those changes; use it only for a deployment without a trigger. Check with `./vpn status`.
 - `start` on a stopped VM costs money while it runs; stop it again when testing (`./vpn down` or `?action=stop`).
 - Secrets are in Secret Manager (`vpn-switch-token`, `vpn-switch-cf-token`). Read them into variables or pipes, never print them.
 - Run `shellcheck -S warning vpn deploy.sh add-peer.sh env.sh server/setup.sh` after editing scripts.
