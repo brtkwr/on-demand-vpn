@@ -62,6 +62,9 @@ for s in vpn-switch-token vpn-switch-cf-token; do
 done
 
 ./deploy.sh
+# Anyone may call the function (it checks its own bearer token); deploy.sh leaves this binding alone
+gcloud run services add-iam-policy-binding vpn-switch "${G[@]}" --region "$REGION" \
+  --member allUsers --role roles/run.invoker
 ```
 
 Then start the VM (`./vpn status` should answer, then call `start` once) and add each device:

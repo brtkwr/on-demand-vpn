@@ -14,6 +14,8 @@ call() {
   curl -sS --fail-with-body --max-time 150 -H @- "$FUNCTION_URL?action=$1" <<<"Authorization: Bearer $token"
 }
 
+[[ ${1:-} == up || ${1:-} == down ]] && : "${WG_CONF:?set WG_CONF in .env}"
+
 case "${1:-}" in
 up)
   sudo wg-quick down "$WG_CONF" 2>/dev/null || true # recover from a tunnel left up after preemption
