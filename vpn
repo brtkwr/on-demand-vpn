@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Switch the VPN on and off from a laptop via the vpn-switch function.
+#   vpn up      start the VM and connect
+#   vpn down    disconnect and stop the VM
+#   vpn status  show the VM's state and IP
+set -euo pipefail
+. "$(dirname "$(readlink -f "$0")")/env.sh"
+
+call() {
+  local token
+  token=$(gcloud secrets versions access latest --secret vpn-switch-token "${GCLOUD[@]}")
+  curl -sf --max-time 150 -H "Authorization: Bearer $token" "$FUNCTION_URL?action=$1"
+}
+
+case "${1:-}" in
+up)
+  out=$(call start); echo "$out"
+  IP=${out##* } # replies to start end with the VM's IP
+  sudo wg-quick up "$WG_CONF"
+  for _ in $(seq 30); do
+    [ "$(curl -s --max-time 2 ifconfig.me)" = "$IP" ] && { echo "connected via $IP"; exit 0; }
+    sleep 2
+  done
+  echo "tunnel up but traffic not flowing via $IP yet" >&2; exit 1
+  ;;
+down)
+  sudo wg-quick down "$WG_CONF" 2>/dev/null || true
+  call stop
+  ;;
+status) call status ;;
+*) echo "usage: $0 up|down|status" >&2; exit 1 ;;
+esac
