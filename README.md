@@ -6,6 +6,7 @@ A personal WireGuard VPN on a GCP spot VM that stays stopped until you need it. 
 - `vpn`: laptop script, `vpn up|down|status`.
 - `add-peer.sh`: add a client device (key generated locally, QR code for phones).
 - `server/setup.sh`: one-off WireGuard setup on the VM.
+- `server/idle-stop.sh` + `enable-idle-stop.sh`: the VM stops itself (via the function, so DNS is parked) once no client has handshaken for 15 minutes.
 - `deploy.sh`: deploy the function.
 
 All deployment-specific values live in `.env` (gitignored). Copy `.env.example` to start.
@@ -70,11 +71,15 @@ Then start the VM (`./vpn status` should answer, then call `start` once) and add
 ./add-peer.sh iphone 10.8.0.3   # scan iphone.png in the WireGuard app, then delete both files
 ```
 
+Then `./enable-idle-stop.sh` (VM running) so the VM stops itself when nobody's connected.
+
 On macOS, `brew install wireguard-tools` provides `wg` and `wg-quick`. Symlink `vpn` onto your `PATH`.
 
 ## iPhone
 
 A Shortcut with _Choose from Menu_ (start, stop), then _Get Contents of URL_ on `https://<region>-<project>.cloudfunctions.net/vpn-switch?action=<choice>` with a header `Authorization: Bearer <token>`, then _Show Result_. Switch the tunnel on in the WireGuard app once `start` returns.
+
+For the least friction, add a Shortcuts automation: **App → WireGuard → Is Opened → Run Immediately**, with _Get Contents of URL_ (`?action=start`, same header) and _Show Notification_ of the result. Opening WireGuard starts the VM; toggle the tunnel once the notification arrives. With `enable-idle-stop.sh` installed, toggling off is enough: the VM stops itself after 15 idle minutes.
 
 ## Notes
 
