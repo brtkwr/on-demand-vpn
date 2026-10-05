@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Switch the VPN on and off from a laptop via the vpn-switch function.
 #   vpn up      start the VM and connect
-#   vpn down    disconnect and stop the VM
+#   vpn down    disconnect (the VM stops itself after 15 idle minutes)
+#   vpn stop    stop the VM now, even if other devices are connected
 #   vpn status  show the VM's state and IP
 set -euo pipefail
 . "$(dirname "$(readlink -f "$0")")/env.sh"
@@ -25,10 +26,8 @@ up)
   done
   echo "tunnel up but traffic not flowing via $IP yet" >&2; exit 1
   ;;
-down)
-  sudo wg-quick down "$WG_CONF" 2>/dev/null || true
-  call stop
-  ;;
+down) sudo wg-quick down "$WG_CONF" ;;
+stop) call stop ;;
 status) call status ;;
-*) echo "usage: $0 up|down|status" >&2; exit 1 ;;
+*) echo "usage: $0 up|down|stop|status" >&2; exit 1 ;;
 esac

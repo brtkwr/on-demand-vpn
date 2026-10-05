@@ -3,7 +3,7 @@
 A personal WireGuard VPN on a GCP spot VM that stays stopped until you need it. A small Cloud Run function starts or stops the VM and points a Cloudflare DNS record at its new IP, so every client connects to the same hostname even though the VM's IP changes on each start.
 
 - `function/`: the `vpn-switch` Cloud Run function (`?action=start|stop|status`, bearer token).
-- `vpn`: laptop script, `vpn up|down|status`.
+- `vpn`: laptop script, `vpn up|down|stop|status`. `down` only disconnects; the VM stops itself once idle, or `stop` stops it now.
 - `add-peer.sh`: add a client device (key generated locally, QR code for phones).
 - `server/setup.sh`: one-off WireGuard setup on the VM.
 - `server/idle-stop.sh` + `enable-idle-stop.sh`: the VM stops itself (via the function, so DNS is parked) once no client has handshaken for 15 minutes.
